@@ -1,0 +1,31 @@
+[project]
+name = "delucie-rurangwa-rl-summative"
+version = "0.1.0"
+description = "Mission-based RL: smart charging controller for an e-moto battery-swap station in Kigali (DQN, REINFORCE, PPO, A2C with TorchRL)"
+readme = "README.md"
+requires-python = ">=3.10,<3.13"
+dependencies = [
+    "gymnasium>=1.0",
+    "numpy>=1.26",
+    "pygame>=2.5",
+    "torch>=2.5",
+    "torchrl>=0.6",
+    "tensordict>=0.6",
+    "matplotlib>=3.8",
+    "pandas>=2.1",
+]
+
+[dependency-groups]
+dev = ["pytest>=8"]
+
+# CPU-only PyTorch: smaller download, works the same on Windows, macOS and Linux
+[tool.uv.sources]
+torch = { index = "pytorch-cpu" }
+
+[[tool.uv.index]]
+name = "pytorch-cpu"
+url = "https://download.pytorch.org/whl/cpu"
+explicit = true
+
+[tool.uv]
+package = false
