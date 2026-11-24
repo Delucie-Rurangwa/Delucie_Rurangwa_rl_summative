@@ -198,9 +198,9 @@ requires-dist = [
     { name = "numpy", specifier = ">=1.26" },
     { name = "pandas", specifier = ">=2.1" },
     { name = "pygame", specifier = ">=2.5" },
-    { name = "tensordict", specifier = ">=0.6" },
-    { name = "torch", specifier = ">=2.5", index = "https://download.pytorch.org/whl/cpu" },
-    { name = "torchrl", specifier = ">=0.6" },
+    { name = "tensordict", specifier = "==0.15.*" },
+    { name = "torch", specifier = ">=2.11,<2.16", index = "https://download.pytorch.org/whl/cpu" },
+    { name = "torchrl", specifier = "==0.15.*" },
 ]
 
 [package.metadata.requires-dev]

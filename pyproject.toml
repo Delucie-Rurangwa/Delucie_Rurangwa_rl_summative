@@ -8,9 +8,9 @@ dependencies = [
     "gymnasium>=1.0",
     "numpy>=1.26",
     "pygame>=2.5",
-    "torch>=2.5",
-    "torchrl>=0.6",
-    "tensordict>=0.6",
+    "torch>=2.11,<2.16",
+    "torchrl==0.15.*",
+    "tensordict==0.15.*",
     "matplotlib>=3.8",
     "pandas>=2.1",
 ]

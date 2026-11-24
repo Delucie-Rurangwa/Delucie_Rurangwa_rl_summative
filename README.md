@@ -22,22 +22,39 @@ All parameters are simulation assumptions documented in `environment/custom_env.
 
 ## Run it
 
-Requires [uv](https://docs.astral.sh/uv/).
+Requires [uv](https://docs.astral.sh/uv/). Everything runs on CPU.
 
 ```bash
 uv sync
-uv run main.py                 # watch the simulation (random agent for now)
-uv run main.py --no-render     # terminal output only
+uv run main.py                 # watch the best trained agent run one day (window + terminal log)
+uv run main.py --algo a2c      # best agent of one algorithm: dqn, reinforce, ppo, a2c
+uv run main.py --busy          # unseen busy day (+30% riders)
+uv run main.py --random        # untrained random agent for comparison
 uv run pytest                  # environment tests
 ```
+
+## Train and analyse
+
+Each command runs the 10 hyperparameter configurations of that algorithm (150,000 environment steps each, about 1,000 simulated days), saves every model, and writes a results table to `logs/<algo>_sweep.csv`.
+
+```bash
+uv run python -m training.dqn_training               # DQN
+uv run python -m training.pg_training --algo all     # REINFORCE, PPO and A2C
+uv run python -m training.analysis                   # best models, plots, convergence, generalisation
+```
+
+Single runs: `--run 3`. Shorter budget: `--frames 50000`.
+
+`training.analysis` saves the figures in `assets/` (cumulative rewards, DQN loss and policy entropy, convergence, sweep overview, generalisation) and `logs/best_models.json`, which `main.py` uses to load the best agent.
 
 ## Project structure
 
 ```
-environment/   custom_env.py (Gymnasium env), rendering.py (pygame visualisation)
-training/      dqn_training.py, pg_training.py (TorchRL)
-models/        saved models (dqn/, pg/)
-logs/          training logs and hyperparameter results
-assets/        screenshots and plots
-tests/         environment tests
+main.py / play.py   run the best trained agent with the visualisation
+environment/        custom_env.py (Gymnasium environment), rendering.py (pygame visualisation)
+training/           common.py, dqn_training.py, pg_training.py (TorchRL), analysis.py
+models/             saved models: dqn/ and pg/
+logs/               training curves (JSON), sweep tables and summaries (CSV)
+assets/             screenshot, figures, Barlow font (SIL Open Font License)
+tests/              environment tests
 ```
