@@ -1,0 +1,105 @@
+{
+  "best_overall": "ppo",
+  "models": {
+    "dqn": {
+      "run": 2,
+      "model": "models/dqn/dqn_run_02.pt",
+      "evaluation": {
+        "mean_reward": 11.188966205717538,
+        "std_reward": 11.67523623814341,
+        "served": 45.5,
+        "lost": 4.2,
+        "energy_cost": 19918.21641836124,
+        "avg_wait_min": 4.141182462894435,
+        "fail_rate": 0.05
+      },
+      "config": {
+        "lr": 0.0003,
+        "gamma": 0.99,
+        "buffer_size": 50000,
+        "batch_size": 64,
+        "eps_end": 0.05,
+        "eps_decay_frames": 40000,
+        "target_update": "soft",
+        "tau": 0.01,
+        "hard_every": 0,
+        "double_dqn": false,
+        "hidden": 128,
+        "activation": "relu",
+        "warmup": 2000
+      }
+    },
+    "reinforce": {
+      "run": 9,
+      "model": "models/pg/reinforce_run_09.pt",
+      "evaluation": {
+        "mean_reward": 10.931309910314877,
+        "std_reward": 9.496092796678413,
+        "served": 47.15,
+        "lost": 3.4,
+        "energy_cost": 22315.81758727642,
+        "avg_wait_min": 3.4899704454333182,
+        "fail_rate": 0.05
+      },
+      "config": {
+        "lr": 0.001,
+        "gamma": 0.99,
+        "episodes_per_batch": 4,
+        "entropy_coef": 0.05,
+        "normalize_returns": true,
+        "hidden": 64,
+        "activation": "tanh"
+      }
+    },
+    "ppo": {
+      "run": 3,
+      "model": "models/pg/ppo_run_03.pt",
+      "evaluation": {
+        "mean_reward": 14.348799423495626,
+        "std_reward": 7.453631181559671,
+        "served": 47.35,
+        "lost": 3.3,
+        "energy_cost": 21434.716005598653,
+        "avg_wait_min": 2.82457172859201,
+        "fail_rate": 0.0
+      },
+      "config": {
+        "lr": 0.001,
+        "gamma": 0.99,
+        "gae_lambda": 0.95,
+        "clip_eps": 0.2,
+        "entropy_coef": 0.01,
+        "critic_coef": 0.5,
+        "epochs": 4,
+        "frames_per_batch": 1440,
+        "minibatch": 240,
+        "hidden": 64,
+        "activation": "tanh"
+      }
+    },
+    "a2c": {
+      "run": 9,
+      "model": "models/pg/a2c_run_09.pt",
+      "evaluation": {
+        "mean_reward": 12.221571655633168,
+        "std_reward": 7.792301411867569,
+        "served": 47.35,
+        "lost": 3.05,
+        "energy_cost": 22432.84891196932,
+        "avg_wait_min": 3.118807094176718,
+        "fail_rate": 0.0
+      },
+      "config": {
+        "lr": 0.0007,
+        "gamma": 0.99,
+        "gae_lambda": 1.0,
+        "n_steps": 32,
+        "entropy_coef": 0.05,
+        "critic_coef": 0.5,
+        "hidden": 64,
+        "activation": "tanh",
+        "max_grad_norm": 0.5
+      }
+    }
+  }
+}

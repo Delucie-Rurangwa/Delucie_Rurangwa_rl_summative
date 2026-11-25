@@ -1,0 +1,5 @@
+algorithm,best_run,converged_at_episode,converged_at_steps,final_training_reward,std_last_50,eval_reward
+DQN,2,1019,142053,9.44,10.24,11.19
+REINFORCE,9,977,139618,3.42,13.27,10.93
+PPO,3,512,72689,12.32,7.95,14.35
+A2C,9,228,32298,5.28,11.61,12.22
