@@ -228,18 +228,20 @@ def train_a2c(run_id, cfg, total_frames=TOTAL_FRAMES, seed=0, verbose=True):
         with torch.no_grad():
             gae(data)
         out = loss_fn(data)
-        loss = out["loss_objective"] + out["loss_critic"] + out["loss_entropy"]
+        loss = out["loss_objective"] + out["loss_critic"] + out.get("loss_entropy", torch.zeros(()))
         optim.zero_grad()
         loss.backward()
         nn.utils.clip_grad_norm_(loss_fn.parameters(), cfg["max_grad_norm"])
         optim.step()
+        with torch.no_grad():
+            ent = actor.get_dist(data).entropy().mean()
         if i % max(1, 288 // cfg["n_steps"]) == 0:     # log about twice per simulated day
-            log.log("entropy", out["entropy"].item())
+            log.log("entropy", ent.item())
             log.log("loss", out["loss_objective"].item())
             log.log("critic_loss", out["loss_critic"].item())
             log.log("loss_frame", frames)
         if verbose and i % max(1, 14400 // cfg["n_steps"]) == 0:
-            _progress("a2c", run_id, frames, total_frames, log, f"entropy {out['entropy'].item():.3f}")
+            _progress("a2c", run_id, frames, total_frames, log, f"entropy {ent.item():.3f}")
     collector.shutdown()
     return _finish("a2c", run_id, cfg, logits_net, log, frames, verbose)
 
