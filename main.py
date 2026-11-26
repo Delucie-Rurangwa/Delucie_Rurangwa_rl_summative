@@ -68,6 +68,13 @@ def run(args):
         print(f"\nDay {ep + 1} done: reward {info['reward']:.2f} | served {info['served']} | lost {info['lost']} | "
               f"electricity {info['energy_cost']:,.0f} RWF | fast-charged {info['fast_kwh']:.1f} kWh"
               + ("  (station failed: too many riders lost)" if terminated else "") + "\n")
+    if not args.no_render:
+        import pygame
+        print("Close the station window to finish.")
+        while pygame.display.get_init():
+            if any(e.type == pygame.QUIT for e in pygame.event.get()):
+                break
+            pygame.time.wait(50)
     env.close()
 
 

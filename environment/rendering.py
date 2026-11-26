@@ -96,10 +96,34 @@ class StationRenderer:
     def __init__(self, render_mode: str, fps: int = 8):
         self.render_mode = render_mode
         self.fps = fps
-        pygame.init()
         if render_mode == "human":
+            import os
+            if os.environ.get("SDL_VIDEODRIVER") == "dummy":   # a hidden-window setting would hide the station
+                del os.environ["SDL_VIDEODRIVER"]
+        pygame.init()
+        self.window = None
+        if render_mode == "human":
+            import os
+            # Fit the window to the screen and leave room on the left for the terminal.
+            try:
+                dw, dh = pygame.display.get_desktop_sizes()[0]
+            except Exception:
+                dw, dh = 1366, 768
+            share = float(os.environ.get("STATION_WIDTH", "0.70"))   # fraction of screen width
+            scale = min(1.0, share * dw / W, 0.88 * dh / H)
+            self.win_size = (int(W * scale), int(H * scale))
+            os.environ["SDL_VIDEO_WINDOW_POS"] = f"{dw - self.win_size[0] - 8},{max(30, (dh - self.win_size[1]) // 3)}"
+            pygame.display.quit()
+            pygame.display.init()
             pygame.display.set_caption("Kigali battery-swap station: smart charging agent")
-            self.screen = pygame.display.set_mode((W, H))
+            self.window = pygame.display.set_mode(self.win_size)
+            self.screen = pygame.Surface((W, H))                      # drawn at full size, then scaled
+            try:                                                # bring the window in front of the terminal
+                from pygame._sdl2.video import Window
+                Window.from_display_module().focus()
+            except Exception:
+                pass
+            print(f"Station window opened ({pygame.display.get_driver()} video driver).")
         else:
             self.screen = pygame.Surface((W, H))
         self.clock = pygame.time.Clock()
@@ -376,6 +400,10 @@ class StationRenderer:
         self._scene(env)
         self._dashboard(env)
         if self.render_mode == "human":
+            if self.win_size == (W, H):
+                self.window.blit(self.screen, (0, 0))
+            else:
+                pygame.transform.smoothscale(self.screen, self.win_size, self.window)
             pygame.display.flip()
             self.clock.tick(self.fps)
             return None
