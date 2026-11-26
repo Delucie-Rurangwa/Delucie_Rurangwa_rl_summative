@@ -1,6 +1,8 @@
 # Delucie Rurangwa – RL Summative: Smart Charging for an E-Moto Battery-Swap Station
 
-**Mission:** reduce waiting time at electric moto-taxi battery-swap stations in Kigali while keeping electricity cost and battery wear low.
+**Mission:** reduce waiting time at electric moto-taxi battery-swap stations in Kigali while keeping the station's electricity cost and battery wear low.
+
+**Video:** [add your video link] · **Report:** submitted on Canvas
 
 The agent is the station's smart charging controller. Every 10 simulated minutes it decides how the chargers run. Riders arrive at random (busier during the morning and evening rush), take a fully charged battery and leave their depleted one. If no battery is ready, they wait; after 30 minutes they leave.
 
@@ -18,20 +20,26 @@ The agent is the station's smart charging controller. Every 10 simulated minutes
 | Terminal | End of day (truncation) or 15 riders lost (station failure, −10) |
 | Constraints | 8 kW grid connection; normal charging 1 kW, fast charging 2.5 kW; time-of-use tariff |
 
-All parameters are simulation assumptions documented in `environment/custom_env.py`.
+All parameters are simulation assumptions documented in `environment/custom_env.py`. Riders pay a flat price per swap; the time-of-use prices apply only to the station's own electricity bill, modelled on REG's industrial time-of-use tariff (October 2025).
 
 ## Run it
 
 Requires [uv](https://docs.astral.sh/uv/). Everything runs on CPU.
 
 ```bash
+git clone https://github.com/Delucie-Rurangwa/Delucie_Rurangwa_rl_summative.git
+cd Delucie_Rurangwa_rl_summative
 uv sync
-uv run main.py                 # watch the best trained agent run one day (window + terminal log)
+uv run main.py                 # watch the best trained agent (PPO) run one day: window + terminal log
 uv run main.py --algo a2c      # best agent of one algorithm: dqn, reinforce, ppo, a2c
 uv run main.py --busy          # unseen busy day (+30% riders)
 uv run main.py --random        # untrained random agent for comparison
+uv run main.py --no-render     # terminal output only
+uv run main.py --episodes 3    # several days in a row
 uv run pytest                  # environment tests
 ```
+
+The station window opens on the right of the screen at 70% of its width, leaving room for the terminal. To change its size, set `STATION_WIDTH`, for example `STATION_WIDTH=0.6 uv run main.py`. Close the window with the X to finish.
 
 ## Train and analyse
 
@@ -46,6 +54,21 @@ uv run python -m training.analysis                   # best models, plots, conve
 Single runs: `--run 3`. Shorter budget: `--frames 50000`.
 
 `training.analysis` saves the figures in `assets/` (cumulative rewards, DQN loss and policy entropy, convergence, sweep overview, generalisation) and `logs/best_models.json`, which `main.py` uses to load the best agent.
+
+## Results
+
+Mean reward per day of each method's best run on 20 days never used in training (greedy policy):
+
+| Method | Best run | Reward per day | Riders served | Riders lost |
+|---|---|---|---|---|
+| **PPO** | 3 | **14.35 ± 7.45** | 47.4 | 3.3 |
+| A2C | 9 | 12.22 ± 7.79 | 47.4 | 3.0 |
+| DQN | 2 | 11.19 ± 11.68 | 45.5 | 4.2 |
+| REINFORCE | 9 | 10.93 ± 9.50 | 47.1 | 3.4 |
+| Rule: always start a normal charge | – | 9.58 ± 8.75 | 46.9 | 3.9 |
+| Random controller | – | −35.84 | – | – |
+
+PPO was the best and most stable method, and A2C converged fastest (about 230 days). The full hyperparameter tables are in `logs/<algo>_sweep.csv`, and the analysis is in the report.
 
 ## Project structure
 
